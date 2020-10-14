@@ -34,15 +34,35 @@ exports.getAllBootcamps =catchAsync( async (req,res,next) => {
     // Pagination
     const page = req.query.page * 1 || 1;
     const limit = req.query.limit * 1 || 10;
-    const skip = (page - 1) * limit;
-    query = query.skip(skip).limit(limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const total = await Bootcamp.countDocuments();
+    query = query.skip(startIndex).limit(limit);
 
 
     const bootcamps = await query;
 
+    // Pagination Result
+    const pagination = {}
+
+    if(endIndex < total){
+        pagination.next = {
+            page: page + 1,
+            limit
+        }
+    }
+
+    if(startIndex > 0) {
+        pagination.prev = {
+            page: page -1,
+            limit
+        }
+    }
+
     res.status(200).json({
         results:bootcamps.length,
         status:'Success',
+        pagination,
         data:{
             bootcamps
         }
