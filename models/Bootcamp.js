@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
+const zipcode = require('zipcodes');
 
 const BootcampSchema = new mongoose.Schema(
   {
@@ -36,6 +38,10 @@ const BootcampSchema = new mongoose.Schema(
     address: {
       type: String,
       required: [true, 'Please add an address']
+    },
+    zipcode:{
+      type:String,
+      required:[true, 'A zip code is required']
     },
     location: {
       // GeoJSON Point
@@ -97,6 +103,30 @@ const BootcampSchema = new mongoose.Schema(
       type: Date,
       default: Date.now
     }
+  });
+
+  BootcampSchema.pre('save', function(next){
+    this.slug = slugify(this.name, {lower:true});
+    next();
+  });
+
+  // Geocode and create location field
+  BootcampSchema.pre('save',async function(next) {
+  
+      const loc = await  zipcode.lookup(this.zipcode);
+      console.log(loc)
+      this.location = {
+        type: 'Point',
+        coordinates:[loc.longitude,loc.latitude],
+        formattedAddress:loc.formattedAddress,
+        street : loc.street,
+        city : loc.city,
+        state : loc.state,
+        zipcode : loc.zip,
+        country:loc.country
+      }
+
+      next();
   });
 
   module.exports = mongoose.model('Bootcamp', BootcampSchema);

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=production nodemon app.js",
-    "dev":"nodemon app.js"
+    "dev": "nodemon app.js"
   },
   "keywords": [],
   "author": "",
@@ -13,7 +13,9 @@
   "dependencies": {
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "mongoose": "^5.10.9"
+    "mongoose": "^5.10.9",
+    "slugify": "^1.4.5",
+    "zipcodes": "^8.0.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.5"

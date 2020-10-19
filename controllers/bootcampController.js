@@ -1,3 +1,4 @@
+const zipCode = require('zipcodes');
 const Bootcamp = require('../models/Bootcamp');
 const catchAsync = require('../utils/catchAsync');
 
@@ -68,3 +69,48 @@ exports.getAllBootcamps =catchAsync( async (req,res,next) => {
         }
     });
 });
+
+exports.createBootcamp = catchAsync(async (req,res,next) => {
+    // console.log(req.body);
+    const newBootcamp = await Bootcamp.create(req.body);
+    // console.log(newBootcamp);
+    res.status(201).json({
+        status:'Success',
+        data:{
+            newBootcamp
+        }
+    });
+});
+
+exports.getBootcamp = catchAsync(async (req,res,next) => {
+    const bootcamp = await Bootcamp.findById(req.params.id);
+    res.status(200).json({
+        status:'Success',
+        data:{
+            bootcamp
+        }
+    });
+});
+
+exports.getBootcampWithinRadius = catchAsync(async (req,res,next) => {
+    const {zipcode,distance} = req.params
+    console.log(zipcode)
+    const loc = await zipCode.lookup(zipcode);
+    const lat = loc.latitude;
+    const lang = loc.longitude
+
+    const radius = distance/3963;
+
+    const bootcamps = await Bootcamp.find({
+        location: {$geoWithin:{ $centerSphere:[[lang,lat],radius]}}
+    });
+
+    res.status(200).json({
+        status:'Success',
+        results: bootcamps.length,
+        data:{
+            bootcamps
+        }
+    });
+    
+})
