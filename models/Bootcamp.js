@@ -114,7 +114,6 @@ const BootcampSchema = new mongoose.Schema(
   BootcampSchema.pre('save',async function(next) {
   
       const loc = await  zipcode.lookup(this.zipcode);
-      console.log(loc)
       this.location = {
         type: 'Point',
         coordinates:[loc.longitude,loc.latitude],
