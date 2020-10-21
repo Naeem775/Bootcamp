@@ -73,7 +73,16 @@ exports.getAllBootcamps =catchAsync( async (req,res,next) => {
 });
 
 exports.createBootcamp = catchAsync(async (req,res,next) => {
-    // console.log(req.body);
+    // Add user to req.body
+    req.body.user = req.user.id
+
+    // Check published bootcamps for a user
+    const publishedBootcamp = await Bootcamp.findOne({user:req.user.id});
+
+    if(publishedBootcamp && req.user.role !== 'admin' ){
+        return next(new APIError('This publisher has already published a bootcamp',401));
+    }
+
     const newBootcamp = await Bootcamp.create(req.body);
     // console.log(newBootcamp);
     res.status(201).json({
@@ -128,6 +137,11 @@ exports.uploadBootcampPhoto =catchAsync(async (req,res,next) => {
     if(!bootcamp){
         return next(new APIError(`No bootcamp found with this id ${req.params.id}`,400));
     }
+
+
+    if(bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin'){
+        return next(new APIError('You are not authorized to update bootcamp',401));
+    }
     
     if(!req.files){
         return next(new APIError(`Please upload a file`,400));
@@ -163,7 +177,17 @@ exports.uploadBootcampPhoto =catchAsync(async (req,res,next) => {
 });
 
 exports.updateBootcamp = catchAsync(async (req,res,next) => {
-    const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
+    let bootcamp = await Bootcamp.findById(req.params.id);
+
+    if(!bootcamp){
+        return next(new APIError('No bootcamp found with this id',404));
+    }
+
+    if(bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin'){
+        return next(new APIError('You are not authorized to update bootcamp',401));
+    }
+
+    bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id,req.body,{
         new:true,
         runValidators:true
     });
@@ -178,10 +202,17 @@ exports.updateBootcamp = catchAsync(async (req,res,next) => {
 
 
 exports.deleteBootcamp = catchAsync(async (req,res,next) => {
-    const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
+    let bootcamp = await Bootcamp.findById(req.params.id);
     if(!bootcamp){
         return next(new APIError(`No bootcamp found with this id ${req.params.id}`,400));
     }
+
+    if(bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin'){
+        return next(new APIError('You are not authorized to Delete bootcamp',404));
+    }
+
+
+    bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
     res.status(204).json({
         status:'Success',
         data: null

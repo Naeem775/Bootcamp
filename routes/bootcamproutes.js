@@ -4,9 +4,17 @@ const {getAllBootcamps, createBootcamp, getBootcampWithinRadius,getBootcamp,uplo
 const {protect,restrictTo} = require('../controllers/authController');
 
 router.get('/getBootcampWithinRadius/:zipcode/:distance',getBootcampWithinRadius);
-router.patch('/:id/photo', uploadBootcampPhoto);
-router.route('/').get(getAllBootcamps).post(protect, restrictTo('publisher','admin'),createBootcamp);
+router.route('/').get(getAllBootcamps);
+router.get('/:id',getBootcamp);
 
-router.route('/:id').get(getBootcamp).patch(updateBootcamp).delete(deleteBootcamp);
+// protect router middleware
+router.use(protect, restrictTo('publisher','admin'));
+
+// All these routes are protected
+router.post('/',createBootcamp);
+router.patch('/:id/photo', uploadBootcampPhoto);
+
+router.patch('/:id',updateBootcamp)
+router.delete('/:id',deleteBootcamp);
 
 module.exports = router;
