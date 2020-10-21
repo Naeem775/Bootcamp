@@ -161,3 +161,29 @@ exports.uploadBootcampPhoto =catchAsync(async (req,res,next) => {
         });
     });
 });
+
+exports.updateBootcamp = catchAsync(async (req,res,next) => {
+    const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
+        new:true,
+        runValidators:true
+    });
+
+    res.status(200).json({
+        status:'Success',
+        data:{
+            bootcamp
+        }
+    });
+});
+
+
+exports.deleteBootcamp = catchAsync(async (req,res,next) => {
+    const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
+    if(!bootcamp){
+        return next(new APIError(`No bootcamp found with this id ${req.params.id}`,400));
+    }
+    res.status(204).json({
+        status:'Success',
+        data: null
+    });
+});

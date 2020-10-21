@@ -6,7 +6,7 @@ const path = require('path');
 const errorHandler = require('./middleware/errorHandler');
 const APIError = require('./utils/APIError');
 const bootcampRouter = require('./routes/bootcamproutes');
-const { patch } = require('./routes/bootcamproutes');
+const userRouter = require('./routes/userRoutes');
 
 process.on('uncaughtException', err => {
     console.log('Uncaught Exception, Shutting Down...');
@@ -23,7 +23,10 @@ app.use(express.json());
 app.use(fileupload());
 // Static Path
 app.use(express.static(path.join(__dirname,'public')));
+
+// Mounting Routes
 app.use('/api/v1/bootcamps', bootcampRouter);
+app.use('/api/v1/users',userRouter);
 
 app.all('*', (req,res,next) => {
     next(new APIError(`Can not find ${req.originalUrl} on this server`, 404));
@@ -43,8 +46,10 @@ mongoose.connect(DB, {
 
 const PORT = process.env.PORT || 5000;
 
+// Running Server
 const server  = app.listen(PORT,() => console.log(`server is running on port: ${PORT} in ${process.env.NODE_ENV} mode`));
 
+// Handling unhandled Rejections
 process.on('unhandledRejection', err => {
     console.log('Unhandled Rejection, Shutting Down...');
     console.log(err.name,err.message);
