@@ -27,7 +27,7 @@ const deleteData = catchAsync(async () => {
 
 if(process.argv[2] === '-i'){
     importData()
-    console.log('Data imported successfully...')
+    console.log('Data imported successfully...');
 }else if(process.argv[2] === '-d'){
     deleteData()
     console.log('Data deleted successfully');
