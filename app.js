@@ -5,8 +5,11 @@ const fileupload = require('express-fileupload');
 const path = require('path');
 const errorHandler = require('./middleware/errorHandler');
 const APIError = require('./utils/APIError');
+
+// Routers
 const bootcampRouter = require('./routes/bootcamproutes');
 const userRouter = require('./routes/userRoutes');
+const courseRouters = require('./routes/courseRoutes');
 
 process.on('uncaughtException', err => {
     console.log('Uncaught Exception, Shutting Down...');
@@ -27,6 +30,7 @@ app.use(express.static(path.join(__dirname,'public')));
 // Mounting Routes
 app.use('/api/v1/bootcamps', bootcampRouter);
 app.use('/api/v1/users',userRouter);
+app.use('/api/v1/courses', courseRouters);
 
 app.all('*', (req,res,next) => {
     next(new APIError(`Can not find ${req.originalUrl} on this server`, 404));

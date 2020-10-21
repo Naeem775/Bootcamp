@@ -4,7 +4,6 @@ const catchAsync = require('../utils/catchAsync');
 const APIError = require('../utils/APIError');
 const path = require('path');
 
-
 exports.getAllBootcamps =catchAsync( async (req,res,next) => {
 
     res.status(200).json(res.APIFeatures);

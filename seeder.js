@@ -12,24 +12,23 @@ mongoose.connect(DB, {
         useCreateIndex: true,
         useFindAndModify: false,
         useUnifiedTopology: true
-}).then(() => console.log('database is connected successfully'))
-    .catch(err => console.log(err));
+}).catch(err => console.log(err));
 
 const bootcamps = JSON.parse(fs.readFileSync(`${__dirname}/_data/bootcamps.json`, 'utf-8'));
 
 const importData = catchAsync( async () => {
     await Bootcamp.create(bootcamps);
+    console.log('Data imported successfully...');
 });
 
 const deleteData = catchAsync(async () => {
     await Bootcamp.deleteMany();
+    console.log('Data deleted successfully');
 });
 
 if(process.argv[2] === '-i'){
-    importData()
-    console.log('Data imported successfully...');
+    importData();
 }else if(process.argv[2] === '-d'){
-    deleteData()
-    console.log('Data deleted successfully');
+    deleteData();
 }
 

@@ -1,14 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const {getAllBootcamps, createBootcamp,
-     getBootcampWithinRadius,getBootcamp,
-     uploadBootcampPhoto, updateBootcamp, 
+
+const {
+     getAllBootcamps,
+     createBootcamp,
+     getBootcampWithinRadius,
+     getBootcamp,
+     uploadBootcampPhoto, 
+     updateBootcamp, 
      deleteBootcamp} = require('../controllers/bootcampController');
+
 const {protect,restrictTo} = require('../controllers/authController');
+
+const courseRouter = require('./courseRoutes');
 const APIFeatures = require('../middleware/APIFeatures');
 const Bootcamp = require('../models/Bootcamp');
 
-
+// Nested Routes
+router.use('/:bootcampId/course',courseRouter);
 router.get('/getBootcampWithinRadius/:zipcode/:distance',getBootcampWithinRadius);
 router.route('/').get(APIFeatures(Bootcamp),getAllBootcamps);
 router.get('/:id',getBootcamp);
