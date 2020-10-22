@@ -108,7 +108,12 @@ const BootcampSchema = new mongoose.Schema(
       ref:'User',
       required:true
     }
-  });
+  },
+  {
+    toJSON:{virtuals:true},
+    toObject:{virtuals:true}
+  }
+  );
 
   BootcampSchema.pre('save', function(next){
     this.slug = slugify(this.name, {lower:true});
@@ -131,6 +136,12 @@ const BootcampSchema = new mongoose.Schema(
       }
 
       next();
+  });
+
+  BootcampSchema.virtual('courses',{
+    ref:'Course',
+    foreignField:'bootcamp',
+    localField:'_id'
   });
 
   module.exports = mongoose.model('Bootcamp', BootcampSchema);

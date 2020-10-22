@@ -4,7 +4,8 @@ const CourseSchema = new mongoose.Schema({
   title: {
     type: String,
     trim: true,
-    required: [true, 'Please add a course title']
+    required: [true, 'Please add a course title'],
+    unique:true
   },
   description: {
     type: String,
@@ -41,6 +42,23 @@ const CourseSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   }
+},
+{
+  toJSON:{virtuals:true},
+  toObject:{virtuals:true}
+}
+);
+
+CourseSchema.pre(/^find/, function(next){
+  this.populate({
+    path:'bootcamp',
+    select:'name description'
+  }).populate({
+    path:'user',
+    select:'name'
+  });
+
+  next();
 });
 
 module.exports = mongoose.model('Course', CourseSchema);
