@@ -10,6 +10,7 @@ const APIError = require('./utils/APIError');
 const bootcampRouter = require('./routes/bootcamproutes');
 const userRouter = require('./routes/userRoutes');
 const courseRouters = require('./routes/courseRoutes');
+const reviewRouter = require('./routes/reviewsRouter');
 
 process.on('uncaughtException', (err) => {
   console.log('Uncaught Exception, Shutting Down...');
@@ -31,6 +32,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/v1/bootcamps', bootcampRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/courses', courseRouters);
+app.use('/api/v1/reviews', reviewRouter);
 
 app.all('*', (req, res, next) => {
   next(new APIError(`Can not find ${req.originalUrl} on this server`, 404));

@@ -28,9 +28,9 @@ exports.createCourse = catchAsync(async (req, res, next) => {
 exports.getAllCourses = catchAsync(async (req, res, next) => {
   let query;
   if (req.params.bootcampId) {
-    query = await Course.find({ bootcamp: req.params.bootcampId });
+    query = Course.find({ bootcamp: req.params.bootcampId });
   } else {
-    query = await Course.find();
+    query = Course.find();
   }
 
   const courses = await query;

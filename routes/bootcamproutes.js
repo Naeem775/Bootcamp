@@ -15,11 +15,13 @@ const {
 const { protect, restrictTo } = require('../controllers/authController');
 
 const courseRouter = require('./courseRoutes');
+const reviewRouter = require('./reviewsRouter');
 const APIFeatures = require('../middleware/APIFeatures');
 const Bootcamp = require('../models/Bootcamp');
 
 // Nested Routes
 router.use('/:bootcampId/courses', courseRouter);
+router.use('/:bootcampId/reviews', reviewRouter);
 
 router.get(
   '/getBootcampWithinRadius/:zipcode/:distance',
