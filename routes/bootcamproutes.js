@@ -1,35 +1,41 @@
 const express = require('express');
+
 const router = express.Router();
 
 const {
-     getAllBootcamps,
-     createBootcamp,
-     getBootcampWithinRadius,
-     getBootcamp,
-     uploadBootcampPhoto, 
-     updateBootcamp, 
-     deleteBootcamp} = require('../controllers/bootcampController');
+  getAllBootcamps,
+  createBootcamp,
+  getBootcampWithinRadius,
+  getBootcamp,
+  uploadBootcampPhoto,
+  updateBootcamp,
+  deleteBootcamp,
+} = require('../controllers/bootcampController');
 
-const {protect,restrictTo} = require('../controllers/authController');
+const { protect, restrictTo } = require('../controllers/authController');
 
 const courseRouter = require('./courseRoutes');
 const APIFeatures = require('../middleware/APIFeatures');
 const Bootcamp = require('../models/Bootcamp');
 
 // Nested Routes
-router.use('/:bootcampId/course',courseRouter);
-router.get('/getBootcampWithinRadius/:zipcode/:distance',getBootcampWithinRadius);
-router.route('/').get(APIFeatures(Bootcamp),getAllBootcamps);
-router.get('/:id',getBootcamp);
+router.use('/:bootcampId/courses', courseRouter);
+
+router.get(
+  '/getBootcampWithinRadius/:zipcode/:distance',
+  getBootcampWithinRadius
+);
+router.route('/').get(APIFeatures(Bootcamp), getAllBootcamps);
+router.get('/:id', getBootcamp);
 
 // protect router middleware
-router.use(protect, restrictTo('publisher','admin'));
+router.use(protect, restrictTo('publisher', 'admin'));
 
 // All these routes are protected
-router.post('/',createBootcamp);
+router.post('/', createBootcamp);
 router.patch('/:id/photo', uploadBootcampPhoto);
 
-router.patch('/:id',updateBootcamp)
-router.delete('/:id',deleteBootcamp);
+router.patch('/:id', updateBootcamp);
+router.delete('/:id', deleteBootcamp);
 
 module.exports = router;

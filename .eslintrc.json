@@ -5,6 +5,7 @@
     "prettier/prettier": "warn",
     "spaced-comment": "off",
     "no-console": "off",
+    "no-useless-escape": "off",
     "consistent-return": "off",
     "func-names": "off",
     "object-shorthand": "off",
