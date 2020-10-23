@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const fileupload = require('express-fileupload');
+const cookieParser = require('cookie-parser');
 const path = require('path');
 const errorHandler = require('./middleware/errorHandler');
 const APIError = require('./utils/APIError');
@@ -23,6 +24,7 @@ dotenv.config({ path: './config/config.env' });
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use(fileupload());
 // Static Path

@@ -34,9 +34,11 @@ const ReviewSchema = new mongoose.Schema({
   },
 });
 
+// A user can only write one review for a bootcamp
+ReviewSchema.index({ bootcamp: 1, user: 1 }, { unique: true });
+
 // Static method to calculate average ratings for a bootcamp
 ReviewSchema.statics.calcAverageRatings = async function (bootcampId) {
-  console.log(bootcampId);
   const ratings = await this.aggregate([
     {
       $match: { bootcamp: bootcampId },
@@ -49,7 +51,6 @@ ReviewSchema.statics.calcAverageRatings = async function (bootcampId) {
       },
     },
   ]);
-  console.log(ratings);
   if (ratings.length > 0) {
     await Bootcamp.findByIdAndUpdate(bootcampId, {
       totalRatings: ratings[0].nRatings,
