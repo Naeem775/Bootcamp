@@ -60,6 +60,14 @@ UserSchema.pre('save', async function (next) {
   next();
 });
 
+// Setting user password changed at property
+UserSchema.pre('save', function (next) {
+  if (!this.isModified('password') || this.isNew) return next();
+
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
 // Comparing Password
 UserSchema.methods.correctPassword = async function (password, userPassword) {
   return await bcrypt.compare(password, userPassword);
@@ -72,7 +80,6 @@ UserSchema.methods.passwordChangedAfter = function (JWTTimeStamp) {
       this.passwordChangedAt.getTime() / 1000,
       10
     );
-    console.log(changedTimeStamp, JWTTimeStamp);
     return JWTTimeStamp < changedTimeStamp;
   }
 
@@ -88,7 +95,8 @@ UserSchema.methods.createResetToken = function () {
     .digest('hex');
 
   // console.log(resetToken, this.resetPasswordToken);
-  this.resetPasswordExpire = Date.now() + 10 * 1000;
+  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+  return resetToken;
 };
 
 module.exports = mongoose.model('User', UserSchema);
