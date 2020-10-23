@@ -102,9 +102,10 @@ exports.protect = catchAsync(async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
-  } else if (req.cookies.jwt) {
-    token = req.cookies.jwt;
   }
+  // else if (req.cookies.jwt) {
+  //   token = req.cookies.jwt;
+  // }
   if (!token) {
     return next(
       new APIError('You are not logged in,please log in to get access', 401)
@@ -212,5 +213,33 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   user.resetPasswordExpire = undefined;
   await user.save();
   // 3) Log the user in, Send jwt
+  createSendToken(res, user, 200);
+});
+
+// Update Password
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  // Get User from collection
+  const user = await User.findById(req.user.id).select('+password');
+
+  // Check if posted current Password is correct
+  const correct = await user.correctPassword(
+    req.body.currentPassword,
+    user.password
+  );
+  if (!correct) {
+    return next(
+      new APIError(
+        'Your current password is not correct,please enter right password',
+        401
+      )
+    );
+  }
+
+  // Update the password if current password is correct
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  await user.save();
+
+  // Log user in and send token
   createSendToken(res, user, 200);
 });
